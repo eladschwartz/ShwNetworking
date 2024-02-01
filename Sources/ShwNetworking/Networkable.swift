@@ -5,13 +5,22 @@
 import Foundation
 
 public protocol Networkable {
+    
+    @available(iOS 15.0, *)
     func sendRequest<T: Decodable>(urlStr: String) async throws -> T
+    
+    @available(iOS 15.0, *)
+    func sendRequest<T>(staticString string: StaticString) async throws -> T where T : Decodable
+    
+    @available(iOS 13.0, *)
     func sendRequest<T: Decodable>(endpoint: EndPoint) async throws -> T
+    
     func sendRequest<T: Decodable>(endpoint: EndPoint, resultHandler: @escaping (Result<T, NetworkError>) -> Void)
 }
 
 public final class NetworkService: Networkable {
     
+    @available(iOS 15.0, *)
     public func sendRequest<T>(urlStr: String) async throws -> T where T : Decodable {
         guard let urlStr = urlStr as String?,
               let url = URL(string: urlStr) as URL?else {
@@ -33,6 +42,7 @@ public final class NetworkService: Networkable {
         return decodedResponse
     }
     
+    @available(iOS 15.0, *)
     public func sendRequest<T>(staticString string: StaticString) async throws -> T where T : Decodable {
         
         guard let url = URL(string: "\(string)") else {
@@ -54,6 +64,8 @@ public final class NetworkService: Networkable {
         return decodedResponse
     }
     
+    
+    @available(iOS 13.0, *)
     public func sendRequest<T: Decodable>(endpoint: EndPoint) async throws -> T {
         guard let urlRequest = createRequest(endPoint: endpoint) else {
             throw NetworkError.decode
@@ -112,6 +124,8 @@ public final class NetworkService: Networkable {
         }
         urlTask.resume()
     }
+    
+    
 
     public init() {
 
